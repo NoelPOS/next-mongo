@@ -2,9 +2,14 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
+import { DataGrid } from '@mui/x-data-grid'
 
 export default function Home() {
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE
+  const columns = [
+    { field: 'name', headerName: 'Name', width: 200 },
+    { field: 'order', headerName: 'Order', width: 200 },
+  ]
   const [categoryList, setCategoryList] = useState([])
   const [updateForm, setUpdateForm] = useState(false)
   let idToBeUpdated = null
@@ -13,7 +18,13 @@ export default function Home() {
   async function fetchCategory() {
     const data = await fetch(`${API_BASE}/category`)
     const c = await data.json()
-    setCategoryList(c)
+    const c2 = c.map((category) => {
+      return {
+        ...category,
+        id: category._id,
+      }
+    })
+    setCategoryList(c2)
   }
 
   function startEdit(category) {
@@ -112,7 +123,9 @@ export default function Home() {
       </div>
       <div>
         <h1>Category ({categoryList.length})</h1>
-        {categoryList.map((category) => (
+        <DataGrid rows={categoryList} columns={columns} />
+
+        {/* {categoryList.map((category) => (
           <div key={category._id}>
             <button
               className='border border-black mx-2 px-2'
@@ -127,7 +140,7 @@ export default function Home() {
               {category.name}
             </Link>
           </div>
-        ))}
+        ))} */}
       </div>
     </main>
   )
