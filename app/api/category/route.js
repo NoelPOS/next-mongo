@@ -1,6 +1,14 @@
 import Category from '@/models/Category'
 
-export async function GET() {
+export async function GET(request) {
+  const pno = request.nextUrl.searchParams.get('pno')
+  if (pno) {
+    const size = 3
+    const categories = await Category.find()
+      .skip(pno - 1)
+      .limit(size)
+    return Response.json(categories)
+  }
   const categories = await Category.find()
   return Response.json(categories)
 }
